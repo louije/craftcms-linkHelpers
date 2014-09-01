@@ -131,20 +131,17 @@ class LinkHelpersTwigExtension extends \Twig_Extension
 	 */ 
 	protected function pregUrls($string)
 	{
-		// @todo: Evaluate http://stackoverflow.com/a/1945957/1052406
-		$regexp = "/(<a.*?>)?(https?)?(:\/\/)?(\w+\.)?(\w+)\.(\w+)(<\/a.*?>)?/i";
-		$anchorMarkup = "<a href=\"%s://%s\" target=\"_blank\" >%s</a>";
+		$regexp				= '#(?i)\b((?:[a-z][\w-]+:(?:/{1,3}|[a-z0-9%])|www\d{0,3}[.]|[a-z0-9.\-]+[.][a-z]{2,4}/)(?:[^\s()<>]+|\(([^\s()<>]+|(\([^\s()<>]+\)))*\))+(?:\(([^\s()<>]+|(\([^\s()<>]+\)))*\)|[^\s`!()\[\]{};:\'".,<>?«»“”‘’]))#i';
+		$anchorMarkup = "<a href=\"%s\" target=\"_blank\" >%s</a>";
 
 		preg_match_all($regexp, $string, $matches, \PREG_SET_ORDER);
 
 		foreach ($matches as $match)
 		{
-			if (empty($match[1]) && empty($match[7]))
-			{
-				$http = $match[2]?$match[2] : 'http';
-				$replace = sprintf($anchorMarkup, $http, $match[0], $match[0]);
-				$string = str_replace($match[0], $replace, $string);
-			}
+			$m = $match[0];
+			$url = (preg_match("/^\w+:/", $m)) ? $m : "http://$m";
+			$replace = sprintf($anchorMarkup, $url, $m);
+			$string = str_replace($match[0], $replace, $string);
 		}
 
 		return $string;
