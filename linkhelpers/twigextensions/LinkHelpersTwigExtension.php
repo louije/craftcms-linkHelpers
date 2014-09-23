@@ -47,6 +47,7 @@ class LinkHelpersTwigExtension extends \Twig_Extension
 		return array(
 			'linkEmail' => new Twig_Function_Method($this, 'linkEmail'),
 			'linkUrl' => new Twig_Function_Method($this, 'linkUrl'),
+			'linkText' => new Twig_Function_Method($this, 'linkText'),
 		);
 	}
 
@@ -76,6 +77,23 @@ class LinkHelpersTwigExtension extends \Twig_Extension
 		// @todo: Verify?
 
 		$return = "<a href=\"$url\">$url</a>";
+
+		return $this->returnString($return);
+	}
+
+	/**
+	 * Enclose text with anchor tag if URL present
+	 * 
+	 * @param  string      $url
+	 * @return Twig_Markup
+	 */
+	public function linkText($text, $url = null)
+	{
+		if (!empty($url)) {
+			$return = "<a href=\"$url\">$text</a>";
+		} else {
+			$return = $text;
+		}
 
 		return $this->returnString($return);
 	}
